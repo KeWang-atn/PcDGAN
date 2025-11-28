@@ -15,6 +15,8 @@ from sklearn.model_selection import GridSearchCV
 from tabulate import tabulate
 from data import Donut2D, ThinDonut2D, Uniform2D, MixRing6
 
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 parser = argparse.ArgumentParser(description='Train Parameters')
 parser.add_argument('model', type=str, default='PcDGAN', help='Set which model architecture you intend to train. Default: PcDGAN, Options: CcGAN, PcDGAN')
 parser.add_argument('dataset', type=str, default='Uneven', help='Set which dataset to use. Default: Uneven, Options: Uneven, Donut, Uniform')
@@ -129,12 +131,13 @@ if __name__ == "__main__":
             flag = True
             while flag:
                 flag = False
-                try:
-                    model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
-                except:
-                    print("\nCUDA error encountered. Restarting training ...\n")
-                    flag = True
-                    model = PcDGAN(lambda0=args.lambda0, lambda1=args.lambda1, kappa=args.kappa, sigma=args.sigma, lambert_cutoff=args.lambert_cutoff, strategy=args.vicinal_type,Y=Y)
+                model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
+                # try:
+                #     model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
+                # except:
+                #     print("\nCUDA error encountered. Restarting training ...\n")
+                #     flag = True
+                #     model = PcDGAN(lambda0=args.lambda0, lambda1=args.lambda1, kappa=args.kappa, sigma=args.sigma, lambert_cutoff=args.lambert_cutoff, strategy=args.vicinal_type,Y=Y)
             model.discriminator.save_weights('./'+folder+'/Weights/Discriminator/PcDGAN/experiment'+args.id)
             model.generator.save_weights('./'+folder+'/Weights/Generator/PcDGAN/experiment'+args.id)
         else:
@@ -189,7 +192,7 @@ if __name__ == "__main__":
         ind  = np.random.choice(X.shape[0],replace=False,size=1000)
         data_plot(X[ind],equation,'./'+folder+'/Evaluation/PcDGAN/Data_' + str(args.id) + '.png')
 
-        dist_anim(Xs,conds,equation,'./'+folder+'/Evaluation/PcDGAN/out_put_samples_' + str(args.id) + '.mp4')
+        # dist_anim(Xs,conds,equation,'./'+folder+'/Evaluation/PcDGAN/out_put_samples_' + str(args.id) + '.mp4')
 
         plt.figure(figsize=(18,12))
         plt.rc('font', size=45)

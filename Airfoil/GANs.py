@@ -146,7 +146,7 @@ class CcGAN(keras.Model):
                     self.estimator.save_weights(early_stop_save)
 
             
-            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer._decayed_lr('float32')))
+            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate))   # optimizer._decayed_lr('float32')
         print('Best Estimator Saved With: Validation_L1 = %f, Train_L1 = %f' % (best, best_train))
     
     @tf.function

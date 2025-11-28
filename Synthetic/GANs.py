@@ -375,6 +375,6 @@ class PcDGAN(keras.Model):
             X_real, Y_real, batch_fake_labels, batch_target_labels = tf.cast(X_real, tf.float32), tf.cast(Y_real, tf.float32), tf.cast(batch_fake_labels, tf.float32), tf.cast(batch_target_labels, tf.float32)
             d_loss_real, d_loss_fake, g_loss, cond_score, dpp_loss = self.train_step(X_real, Y_real, equation, batch_fake_labels, batch_target_labels, d_optimizer,g_optimizer)
             log_mesg = "%d: [D] real %+.7f fake %+.7f" % (step+1, d_loss_real, d_loss_fake)
-            log_mesg = "%s  [G] fake %+.7f dpp %+.7f [C] cs %+.7f lr %+.7f" % (log_mesg, g_loss, dpp_loss, cond_score, g_optimizer._decayed_lr('float32'))
+            log_mesg = "%s  [G] fake %+.7f dpp %+.7f [C] cs %+.7f lr %+.7f" % (log_mesg, g_loss, dpp_loss, cond_score, g_optimizer.learning_rate)# g_optimizer._decayed_lr('float32')
                
             steps.set_postfix_str(log_mesg)

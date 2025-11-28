@@ -46,7 +46,7 @@ if not os.path.exists('./Samples'):
     os.mkdir('./Samples')
     
 if not os.path.exists('./Evaluation'):
-    os.mkdir('./Evaluations')
+    os.mkdir('./Evaluation')
     
 if not os.path.exists('./Weights/Discriminator'):
     os.mkdir('./Weights/Discriminator')
