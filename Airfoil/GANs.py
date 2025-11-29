@@ -146,7 +146,7 @@ class CcGAN(keras.Model):
                     self.estimator.save_weights(early_stop_save)
 
             
-            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate))   # optimizer._decayed_lr('float32')
+            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate))   # optimizer.learning_rate
         print('Best Estimator Saved With: Validation_L1 = %f, Train_L1 = %f' % (best, best_train))
     
     @tf.function
@@ -204,7 +204,7 @@ class CcGAN(keras.Model):
                     best_train = L1
                     self.embedder.save_weights(early_stop_save)
             
-            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer._decayed_lr('float32')))
+            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate)) # optimizer.learning_rate
         print('Best Embedder Saved With: Validation_L1 = %f, Train_L1 = %f' % (best, best_train))
     
     def get_batch(self, X, Y, batch_size):
@@ -338,8 +338,8 @@ class CcGAN(keras.Model):
             X_real, Y_real, batch_fake_labels, batch_target_labels = self.get_batch(X, Y, batch_size)
             X_real, Y_real, batch_fake_labels, batch_target_labels = tf.cast(X_real, tf.float32), tf.cast(Y_real, tf.float32), tf.cast(batch_fake_labels, tf.float32), tf.cast(batch_target_labels, tf.float32)
             d_loss_real, d_loss_fake, q_loss_d, g_loss, r_loss, q_loss = self.train_step(X_real, Y_real, batch_fake_labels, batch_target_labels, d_optimizer,g_optimizer)
-            log_mesg = "%d: [D] real %+.7f fake %+.7f q %+.7f lr %+.7f" % (step+1, d_loss_real, d_loss_fake, q_loss_d, d_optimizer._decayed_lr('float32'))
-            log_mesg = "%s  [G] fake %+.7f reg %+.7f q %+.7f lr %+.7f" % (log_mesg, g_loss, r_loss, q_loss, g_optimizer._decayed_lr('float32'))
+            log_mesg = "%d: [D] real %+.7f fake %+.7f q %+.7f lr %+.7f" % (step+1, d_loss_real, d_loss_fake, q_loss_d, d_optimizer.learning_rate)
+            log_mesg = "%s  [G] fake %+.7f reg %+.7f q %+.7f lr %+.7f" % (log_mesg, g_loss, r_loss, q_loss, g_optimizer.learning_rate)
                
             steps.set_postfix_str(log_mesg)
             
@@ -509,7 +509,7 @@ class PcDGAN(keras.Model):
                     self.estimator.save_weights(early_stop_save)
 
             
-            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer._decayed_lr('float32')))
+            steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate))
         print('Best Estimator Saved With: Validation_L1 = %f, Train_L1 = %f' % (best, best_train))
     
     def get_batch(self, X, Y, batch_size):
@@ -669,7 +669,7 @@ class PcDGAN(keras.Model):
             lambda1 = tf.constant(lambda1,dtype=tf.float32)
             
             d_loss_real, d_loss_fake, q_loss_d, g_loss, r_loss, q_loss, cond_score, dpp_loss = self.train_step(X_real, Y_real, batch_fake_labels, batch_target_labels, d_optimizer,g_optimizer,lambda1)
-            log_mesg = "%d: [D] real %+.7f fake %+.7f q %+.7f lr %+.7f" % (step+1, d_loss_real, d_loss_fake, q_loss_d, d_optimizer._decayed_lr('float32'))
-            log_mesg = "%s  [G] fake %+.7f reg %+.7f q %+.7f lr %+.7f dpp %+.7f l1 %+.7f [C] cs %+.7f" % (log_mesg, g_loss, r_loss, q_loss, g_optimizer._decayed_lr('float32'),dpp_loss, lambda1, cond_score)
+            log_mesg = "%d: [D] real %+.7f fake %+.7f q %+.7f lr %+.7f" % (step+1, d_loss_real, d_loss_fake, q_loss_d, d_optimizer.learning_rate)
+            log_mesg = "%s  [G] fake %+.7f reg %+.7f q %+.7f lr %+.7f dpp %+.7f l1 %+.7f [C] cs %+.7f" % (log_mesg, g_loss, r_loss, q_loss, g_optimizer.learning_rate,dpp_loss, lambda1, cond_score)
             
             steps.set_postfix_str(log_mesg)
