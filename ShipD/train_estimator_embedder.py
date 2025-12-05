@@ -91,5 +91,6 @@ if not os.path.exists('./Evaluation/PcDGAN'):
     os.mkdir('./Evaluation/PcDGAN')
     
 dummy_model = CcGAN()
+print("shape of X_train: ", X_train.shape)
 dummy_model.train_estimator(X_train,Y_train,X_test,Y_test, lr=args.estimator_lr, train_steps=args.estimator_train_steps, batch_size=args.estimator_batch_size, early_stop_save='./Weights/Estimator/' + args.estimator_save_name)
 dummy_model.train_embedder(X_train,Y_train,X_test,Y_test, lr=args.embedder_lr, train_steps=args.embedder_train_steps, batch_size=args.embedder_batch_size, early_stop_save='./Weights/Embedder/' + args.embedder_save_name)

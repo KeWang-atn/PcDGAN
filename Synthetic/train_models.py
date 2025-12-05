@@ -99,6 +99,10 @@ if __name__ == "__main__":
     ind = np.random.choice(data_obj.data.shape[0], size=1000, replace=False)
     X = data_obj.data
     Y = np.expand_dims(func_obj.equation(X),-1)
+
+    print("Shape of X: ", X.shape)
+    print("Shape of Y: ", Y.shape)
+
     miny = np.min(Y)
     maxy = np.max(Y)
     rangey = maxy - miny
@@ -131,13 +135,13 @@ if __name__ == "__main__":
             flag = True
             while flag:
                 flag = False
-                model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
-                # try:
-                #     model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
-                # except:
-                #     print("\nCUDA error encountered. Restarting training ...\n")
-                #     flag = True
-                #     model = PcDGAN(lambda0=args.lambda0, lambda1=args.lambda1, kappa=args.kappa, sigma=args.sigma, lambert_cutoff=args.lambert_cutoff, strategy=args.vicinal_type,Y=Y)
+                # model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
+                try:
+                    model.train(X,equation,train_steps=args.train_steps,batch_size=args.batch_size, disc_lr=args.disc_lr, gen_lr=args.gen_lr)
+                except:
+                    print("\nCUDA error encountered. Restarting training ...\n")
+                    flag = True
+                    model = PcDGAN(lambda0=args.lambda0, lambda1=args.lambda1, kappa=args.kappa, sigma=args.sigma, lambert_cutoff=args.lambert_cutoff, strategy=args.vicinal_type,Y=Y)
             model.discriminator.save_weights('./'+folder+'/Weights/Discriminator/PcDGAN/experiment'+args.id)
             model.generator.save_weights('./'+folder+'/Weights/Generator/PcDGAN/experiment'+args.id)
         else:
