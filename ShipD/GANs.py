@@ -10,6 +10,7 @@ from models import CcGenerator, CcDiscriminator, Estimator, Embedder, PcDGenerat
 from utils import lambert_w_log_exp_score
 import pickle
 from glob import glob
+import matplotlib.pyplot as plt   
 
 tf.autograph.set_verbosity(0)
 
@@ -182,7 +183,9 @@ class CcGAN(keras.Model):
         
         best = m1
         best_train = -1.0
-
+        loss_list = []
+        best_list = [best]
+        m1_list = []
         for step in steps:
             if balanced_training:
                 X_batch,Y_batch = self.get_balanced_batch(X_train,Y_train,batch_size)
@@ -193,19 +196,44 @@ class CcGAN(keras.Model):
                 Y_batch = Y_train[ind]
             
             loss,L1 = self.embedder_train_step(X_batch,Y_batch,optimizer)
-            
+            loss_list.append(loss)
             if (step+1)%50 == 0:
                 h = self.estimator(X_test)[1]
                 h_pred = self.embedder(Y_test)
                 m1 = validation_metric1(h,h_pred)
                 m2 = validation_metric2(h,h_pred)
+                m1_list.append(m1)
                 if early_stop_save and m1<=best:
                     best = m1
                     best_train = L1
                     self.embedder.save_weights(early_stop_save)
+                best_list.append(best)
             
             steps.set_postfix_str('Train L2: %f | L1: %f, Validation L1: %f | L2: %f, lr: %f' % (loss,L1,m1,m2,optimizer.learning_rate)) # optimizer.learning_rate
         print('Best Embedder Saved With: Validation_L1 = %f, Train_L1 = %f' % (best, best_train))
+
+        plt.figure()
+        plt.plot(loss_list, label="Train Loss")
+        plt.xlabel("Iteration")
+        plt.ylabel("Loss")
+        plt.title("Embedder Training Loss")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        plt.show()
+        plt.savefig("img/embedder_training_loss.png")
+
+        plt.figure()
+        plt.plot(best_list, label="best validation MAE")
+        plt.plot(m1_list, label="validation MAE")
+        plt.xlabel("Iteration")
+        plt.ylabel("MAE")
+        plt.title("MAE")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        plt.show()
+        plt.savefig("img/embedder_MAE.png")
+
+        
     
     def get_batch(self, X, Y, batch_size):
         
